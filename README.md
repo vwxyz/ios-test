@@ -8,7 +8,7 @@ parse a xml data &amp; render it as a simple grayscale image
 
 ```
 git clone git@github.com:vwxyz/ios-test.git
-cd is-test/
+cd ios-test/
 pod install
 open ios-test.xcworkspace
 ```
