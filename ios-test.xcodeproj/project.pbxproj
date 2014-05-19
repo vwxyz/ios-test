@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		603B44EF1928532400E5FD7D /* default.css in Resources */ = {isa = PBXBuildFile; fileRef = 603B44EE1928532400E5FD7D /* default.css */; };
 		604D2DDC19234A95000110D7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 604D2DDB19234A95000110D7 /* Foundation.framework */; };
 		604D2DDE19234A95000110D7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 604D2DDD19234A95000110D7 /* CoreGraphics.framework */; };
 		604D2DE019234A95000110D7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 604D2DDF19234A95000110D7 /* UIKit.framework */; };
@@ -37,6 +38,7 @@
 /* Begin PBXFileReference section */
 		3D0259893AE74AB1A70612B1 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		4E55D9A8507F4E5E956544BC /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		603B44EE1928532400E5FD7D /* default.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = default.css; sourceTree = "<group>"; };
 		604D2DD819234A95000110D7 /* ios-test.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ios-test.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		604D2DDB19234A95000110D7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		604D2DDD19234A95000110D7 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -128,6 +130,7 @@
 				604D2DE219234A95000110D7 /* Supporting Files */,
 				604D2E101924EFBD000110D7 /* TableViewController.h */,
 				604D2E111924EFBD000110D7 /* TableViewController.m */,
+				603B44EE1928532400E5FD7D /* default.css */,
 			);
 			path = "ios-test";
 			sourceTree = "<group>";
@@ -223,6 +226,7 @@
 				604D2DF419234A95000110D7 /* Images.xcassets in Resources */,
 				604D2DE619234A95000110D7 /* InfoPlist.strings in Resources */,
 				604D2DEF19234A95000110D7 /* Main.storyboard in Resources */,
+				603B44EF1928532400E5FD7D /* default.css in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

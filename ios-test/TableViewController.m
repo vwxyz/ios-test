@@ -45,7 +45,7 @@ NSArray *groups;
     }
     NSString *total_string = @"¥";
     total_string = [total_string stringByAppendingString:[NSString stringWithFormat:@"%d",total]];
-    NSLog(total_string);
+    NSLog(@"%@",total_string);
     
     
     
@@ -67,6 +67,7 @@ NSArray *groups;
 
     UITableView *view = self.tableView;
     view.backgroundColor = [UIColor whiteColor];
+//    view.separatorColor = [UIColor clearColor];
     UIGraphicsBeginImageContextWithOptions(view.frame.size, NO, 0);
 //    UIGraphicsBeginImageContext(view.frame.size);
     [view.layer renderInContext:UIGraphicsGetCurrentContext()];
@@ -86,12 +87,17 @@ NSArray *groups;
     [alert show];
 }
 
+//via http://stackoverflow.com/questions/18921703/implicit-conversion-from-enumeration-type-enum-cgimagealphainfo-to-different-e
+
+#define kBitsPerComponent 8
+#define kBitmapInfo       kCGImageAlphaNone
+
 -(UIImage*)convertGrayScaleImage:(UIImage*)image
 
 {
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
-    CGContextRef context = CGBitmapContextCreate(nil, image.size.width, image.size.height, 8, 0,
-                                                 colorSpace, kCGImageAlphaNone);
+    CGBitmapInfo bitmapInfo = (CGBitmapInfo) kBitmapInfo;
+    CGContextRef context = CGBitmapContextCreate(nil, image.size.width, image.size.height, 8, 0,colorSpace, bitmapInfo);
     CGRect rect = CGRectMake(0.0, 0.0, image.size.width, image.size.height);
     CGColorSpaceRelease(colorSpace);
     CGContextDrawImage(context, rect, [image CGImage]);
