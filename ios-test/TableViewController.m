@@ -15,10 +15,74 @@
 
 @implementation TableViewController
 
+#pragma mark - ライフサイクル
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    // 受信、辞書データに変換
+    NSDictionary *xmldata = [self getxml:@"https://gist.githubusercontent.com/vwxyz/0b4b9c9ffa8e99a86812/raw/4a8ea764b18ad8f5fb46df1b98abcecae84830b6/sample.xml"];
+    NSString *title = [xmldata valueForKeyPath:@"receipt.title.text"];
+
+    //NSLog(@"%@",[[[xmldata objectForKey:@"receipt"] objectForKey:@"title"] objectForKey:@"text"]);
+    //NSLog(@"%@",[xmldata description]);
+    
+    //合計計算
+    int total = 0;
+    NSArray *arr = [xmldata valueForKeyPath:@"receipt.line-item"];
+    for(int i=0; i< [arr count]; i++){
+        total = total + [[arr[i] valueForKeyPath:@"price.text"] intValue];
+    }
+    // 950-> ¥950に
+    NSString *total_string = @"¥";
+    total_string = [total_string stringByAppendingString:[NSString stringWithFormat:@"%d",total]];
+    //NSLog(@"%@",total_string);
+    
+    
+    
+    groupName = @[title,@"",@""];
+    groups = @[
+               @[
+                   [[[xmldata valueForKeyPath:@"receipt.subtitle"] objectAtIndex:0] objectForKey:@"text"],
+                   [[[xmldata valueForKeyPath:@"receipt.subtitle"] objectAtIndex:1] objectForKey:@"text"],
+                   [[[xmldata valueForKeyPath:@"receipt.subtitle"] objectAtIndex:2] objectForKey:@"text"],
+                   ],
+               [xmldata valueForKeyPath:@"receipt.line-item"],
+               @[total_string]
+               ];
+    
+    //tableviewの表示内容を生成
+    [self.tableView reloadData];
+    
+    //tableviewの表示内容を画像に変換
+    [self getImage];
+    
+}
+
+
+
 
 NSArray *groupName;
 NSArray *groups;
 
+#pragma mark - xmlデータ取得、nsdictionaryへ変換
+- (NSDictionary *)getxml:(NSString *) theUrlString
+{
+    NSError *error=nil;
+    NSURL *theUrl = [NSURL URLWithString:theUrlString];
+    NSData *theData = [NSData dataWithContentsOfURL:theUrl];
+    NSDictionary *dict= [XMLReader dictionaryForXMLData:theData error:&error];
+
+    return dict;
+}
+
+#pragma mark - Table view data source
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -29,93 +93,6 @@ NSArray *groups;
     return self;
 }
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    NSDictionary *xmldata = [self getxml];
-//    NSLog(@"%@",[[[xmldata objectForKey:@"receipt"] objectForKey:@"title"] objectForKey:@"text"]);
-    NSLog(@"%@",[xmldata description]);
-    NSString *subtitle = [xmldata valueForKeyPath:@"receipt.title.text"];
-    
-    //合計計算
-    int total = 0;
-    NSArray *arr = [xmldata valueForKeyPath:@"receipt.line-item"];
-    for(int i=0; i< [arr count]; i++){
-        total = total + [[arr[i] valueForKeyPath:@"price.text"] intValue];
-    }
-    NSString *total_string = @"¥";
-    total_string = [total_string stringByAppendingString:[NSString stringWithFormat:@"%d",total]];
-    NSLog(@"%@",total_string);
-    
-    
-    
-
-    groupName = @[subtitle,@"",@""];
-    groups = @[
-               @[
-                   [[[xmldata valueForKeyPath:@"receipt.subtitle"] objectAtIndex:0] objectForKey:@"text"],
-                   [[[xmldata valueForKeyPath:@"receipt.subtitle"] objectAtIndex:1] objectForKey:@"text"],
-                   [[[xmldata valueForKeyPath:@"receipt.subtitle"] objectAtIndex:2] objectForKey:@"text"],
-                ],
-               [xmldata valueForKeyPath:@"receipt.line-item"],
-               @[total_string]
-               ];
-    
-    [self.tableView reloadData];
-    
-    //tableviewの表示内容を画像に変換
-
-    UITableView *view = self.tableView;
-    view.backgroundColor = [UIColor whiteColor];
-//    view.separatorColor = [UIColor clearColor];
-    UIGraphicsBeginImageContextWithOptions(view.frame.size, NO, 0);
-//    UIGraphicsBeginImageContext(view.frame.size);
-    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    //グレースケールに変換
-    UIImage *grayImage = [self convertGrayScaleImage:image];
-    
-    SEL sel = @selector(savingImageIsFinished:didFinishSavingWithError:contextInfo:);
-    UIImageWriteToSavedPhotosAlbum(grayImage, self, sel, NULL);
-//    [dataSaveImage writeToFile:[path stringByAppendingPathComponent:@"test.png"] atomically:YES];
-}
-
-- (void) savingImageIsFinished:(UIImage *)_image didFinishSavingWithError:(NSError *)_error contextInfo:(void *)_contextInfo
-{
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"レシート保存" message:@"アルバムへ保存しました" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-    [alert show];
-}
-
-//via http://stackoverflow.com/questions/18921703/implicit-conversion-from-enumeration-type-enum-cgimagealphainfo-to-different-e
-
-#define kBitsPerComponent 8
-#define kBitmapInfo       kCGImageAlphaNone
-
--(UIImage*)convertGrayScaleImage:(UIImage*)image
-
-{
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
-    CGBitmapInfo bitmapInfo = (CGBitmapInfo) kBitmapInfo;
-    CGContextRef context = CGBitmapContextCreate(nil, image.size.width, image.size.height, 8, 0,colorSpace, bitmapInfo);
-    CGRect rect = CGRectMake(0.0, 0.0, image.size.width, image.size.height);
-    CGColorSpaceRelease(colorSpace);
-    CGContextDrawImage(context, rect, [image CGImage]);
-    CGImageRef grayscale = CGBitmapContextCreateImage(context);
-    CGContextRelease(context);
-    UIImage* grasyScaleImage = [UIImage imageWithCGImage:grayscale];
-    CFRelease(grayscale);
-    return grasyScaleImage;
-    
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-#pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -175,21 +152,53 @@ NSArray *groups;
     return 44;
 }
 
-#pragma mark - xmlデータ取得、nsdictionaryへ変換
-- (NSDictionary *)getxml
+#pragma mark - tableviewの表示内容を画像に変換、さらにグレースケールに変換、保存
+
+- (void)getImage
 {
-    NSError *error=nil;
-    NSString *theUrlString = @"https://gist.githubusercontent.com/vwxyz/0b4b9c9ffa8e99a86812/raw/4a8ea764b18ad8f5fb46df1b98abcecae84830b6/sample.xml";
-    NSURL *theUrl = [NSURL URLWithString:theUrlString];
-//    NSURLRequest *request = [NSURLRequest requestWithURL:theUrl];
-    NSData *thedata = [NSData dataWithContentsOfURL:theUrl];
-    NSDictionary *dict= [XMLReader dictionaryForXMLData:thedata error:&error];
-    if (dict == nil) {
-        NSLog(@"nil");
-    }else{
-        NSLog(@"not nil");
-    }
-    return dict;
+    UITableView *view = self.tableView;
+    view.backgroundColor = [UIColor whiteColor];
+    //    view.separatorColor = [UIColor clearColor];
+    UIGraphicsBeginImageContextWithOptions(view.frame.size, NO, 0);
+    //    UIGraphicsBeginImageContext(view.frame.size);
+    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    //グレースケールに変換
+    UIImage *grayImage = [self convertGrayScaleImage:image];
+    
+    SEL sel = @selector(savingImageIsFinished:didFinishSavingWithError:contextInfo:);
+    UIImageWriteToSavedPhotosAlbum(grayImage, self, sel, NULL);
+    //    [dataSaveImage writeToFile:[path stringByAppendingPathComponent:@"test.png"] atomically:YES];
+    
 }
+//via http://stackoverflow.com/questions/18921703/implicit-conversion-from-enumeration-type-enum-cgimagealphainfo-to-different-e
+
+#define kBitsPerComponent 8
+#define kBitmapInfo       kCGImageAlphaNone
+
+-(UIImage*)convertGrayScaleImage:(UIImage*)image
+
+{
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
+    CGBitmapInfo bitmapInfo = (CGBitmapInfo) kBitmapInfo;
+    CGContextRef context = CGBitmapContextCreate(nil, image.size.width, image.size.height, 8, 0,colorSpace, bitmapInfo);
+    CGRect rect = CGRectMake(0.0, 0.0, image.size.width, image.size.height);
+    CGColorSpaceRelease(colorSpace);
+    CGContextDrawImage(context, rect, [image CGImage]);
+    CGImageRef grayscale = CGBitmapContextCreateImage(context);
+    CGContextRelease(context);
+    UIImage* grasyScaleImage = [UIImage imageWithCGImage:grayscale];
+    CFRelease(grayscale);
+    return grasyScaleImage;
+    
+}
+
+- (void) savingImageIsFinished:(UIImage *)_image didFinishSavingWithError:(NSError *)_error contextInfo:(void *)_contextInfo
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"レシート保存" message:@"アルバムへ保存しました" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+    [alert show];
+}
+
 
 @end
