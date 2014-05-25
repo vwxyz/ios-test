@@ -1,41 +1,49 @@
 table-view{
-    row-height: 85;
+    row-height: 25;
     header-height: 40;
     background-color: white;
-   separator-style:none;
-}
-
-
-table-view-cell{
-    border:none !important;
-    left:0;
-    text-align:center;
+    separator-style:etched-line;
+    separator-color:none;
 }
 
 table-view-cell content-view{
-    border:none !important;
-    left:0;
 }
 table-view-cell text-label{
-    border:none !important;
-    left:0;
 }
 table-view-cell detail-text-label{
-    border:none !important;
-    left:0;
 }
 table-view-cell attributed-text{
-    border:none !important;
-    left:0;
+}
+
+
+table-view-headerfooter-view{
 }
 
 table-view-headerfooter-view{
-    border-top-width:2px;
-    border-top-style:solid;
-    color:red;
+    background-color:white;
+    border-bottom: 2px solid #ccc;
 }
 
 table-view-headerfooter-view text-label{
     font-familyt:"Apple SD Gothic Neo";
     text-align:center;
-    color:red;
+    font-weight:bold;
+    color:#000;
+    font-size:20px;
+    font-weight:500;
+    trasnform:scale(0.5,1);
+}
+table-view-headerfooter-view text-label{
+}
+
+table-view table-view-cell{
+
+}
+
+.shopInfo{
+    height:20px;
+}
+.shopInfo text-label{
+    text-align:center;
+    font-size:10px;
+}

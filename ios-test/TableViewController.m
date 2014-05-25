@@ -8,6 +8,7 @@
 
 #import "TableViewController.h"
 #import <QuartzCore/QuartzCore.h>
+#import <PixateFreestyle/PixateFreestyle.h>
 
 @interface TableViewController ()
 
@@ -30,6 +31,7 @@
     NSDictionary *xmldata = [self getxml:@"https://gist.githubusercontent.com/vwxyz/0b4b9c9ffa8e99a86812/raw/4a8ea764b18ad8f5fb46df1b98abcecae84830b6/sample.xml"];
     NSString *title = [xmldata valueForKeyPath:@"receipt.title.text"];
 
+
     //NSLog(@"%@",[[[xmldata objectForKey:@"receipt"] objectForKey:@"title"] objectForKey:@"text"]);
     //NSLog(@"%@",[xmldata description]);
     
@@ -45,8 +47,13 @@
     //NSLog(@"%@",total_string);
     
     
+    //section名
     
-    groupName = @[title,@"",@""];
+    groupName = @[
+                  title
+                  ,@""
+                  ,@""
+                  ];
     groups = @[
                @[
                    [[[xmldata valueForKeyPath:@"receipt.subtitle"] objectAtIndex:0] objectForKey:@"text"],
@@ -114,6 +121,7 @@ NSArray *groups;
         //第１セクションの設定
         if (indexPath.section==0) {
             UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
+            cell.styleClass = @"shopInfo";
             cell.textLabel.text = members[indexPath.row];
             return cell;
         }
